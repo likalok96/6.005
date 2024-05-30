@@ -4,6 +4,8 @@
 package twitter;
 
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Filter consists of methods that filter a list of tweets for those matching a
@@ -27,7 +29,10 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> writtenBy(List<Tweet> tweets, String username) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = tweets.stream().filter(tweet -> (tweet.getAuthor().toLowerCase().equals(username.toLowerCase())) ).collect(Collectors.toList());
+
+        return result;
+        //throw new RuntimeException("not implemented");
     }
 
     /**
@@ -41,7 +46,13 @@ public class Filter {
      *         in the same order as in the input list.
      */
     public static List<Tweet> inTimespan(List<Tweet> tweets, Timespan timespan) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = tweets.stream().filter(tweet -> 
+                            (tweet.getTimestamp().compareTo(timespan.getStart())>=0) && (tweet.getTimestamp().compareTo(timespan.getEnd())<=0)
+                            ).collect(Collectors.toList());
+
+        return result;
+
+        //throw new RuntimeException("not implemented");
     }
 
     /**
@@ -60,7 +71,12 @@ public class Filter {
      *         same order as in the input list.
      */
     public static List<Tweet> containing(List<Tweet> tweets, List<String> words) {
-        throw new RuntimeException("not implemented");
+        List<Tweet> result = tweets.stream().filter(tweet ->
+            words.stream().anyMatch(word -> tweet.getText().toLowerCase().indexOf(word.toLowerCase())>=0 )
+         ).collect(Collectors.toList());
+
+        return result;
+        //throw new RuntimeException("not implemented");
     }
 
 }

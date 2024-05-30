@@ -16,7 +16,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-public class SocialNetworkTest {
+public class MySocialNetworkTest {
 
     /*
      * TODO: your testing strategies for these methods should go here.
@@ -29,6 +29,11 @@ public class SocialNetworkTest {
      *  tweets contains user-mention @ or not
      *  tweets contains self user-mention @ or not
      *  tweets contains repeated user-mention @ or not
+     * 
+     *  tweets contains user-mention # or not
+     *  tweets contains self user-mention # or not
+     *  tweets contains repeated user-mention # or not
+     * 
      *  tweets contains repeated author or not
      * 
      * influencers(followsGraph) 
@@ -43,8 +48,8 @@ public class SocialNetworkTest {
     private static final Instant d3 = Instant.parse("2016-02-17T11:30:00Z");
 
     private static final Tweet tweet1 = new Tweet(1, "alyssa", "is it reasonable to talk about rivest @so much @hello @hahahahaha ?", d1);
-    private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype", d2);
-    private static final Tweet tweet3 = new Tweet(3, "hahahahaha", "hello #hahahaha", d3);
+    private static final Tweet tweet2 = new Tweet(2, "bbitdiddle", "rivest talk in 30 minutes #hype #bbitdiddle", d2);
+    private static final Tweet tweet3 = new Tweet(3, "hahahahaha", "hello", d3);
     private static final Tweet tweet4 = new Tweet(4, "hahahahaha", "hello @hello #hahahaha", d3);
     private static final Tweet tweet5 = new Tweet(5, "hahahahaha", "hello123 @Hello #hahahaha", d3);
     private static final Tweet tweet6 = new Tweet(6, "hahahahaha", "@hello123 @hello #hahahaha", d3);
@@ -70,9 +75,9 @@ public class SocialNetworkTest {
     
     @Test
     public void testGuessFollowsGraphEmpty() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(new ArrayList<>());
+        Map<String, Set<String>> followsGraph = MySocialNetwork.guessFollowsGraph(new ArrayList<>());
 
-        Map<String, Set<String>> followsGraph2 = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet2,tweet3));
+        Map<String, Set<String>> followsGraph2 = MySocialNetwork.guessFollowsGraph(Arrays.asList(tweet3));
 
         
         assertTrue("expected empty graph", followsGraph.isEmpty());
@@ -82,11 +87,11 @@ public class SocialNetworkTest {
 
     @Test
     public void testGuessFollowsGraph1Result() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(Arrays.asList(tweet4));
+        Map<String, Set<String>> followsGraph = MySocialNetwork.guessFollowsGraph(Arrays.asList(tweet4));
         Set<String> expectedUsers = new HashSet<>();
         expectedUsers.addAll(Arrays.asList("hahahahaha"));
         Set<String> expectedFollowers = new HashSet<>();
-        expectedFollowers.addAll(Arrays.asList("hello"));
+        expectedFollowers.addAll(Arrays.asList("hello","hahahaha"));
 
         assertFalse("expected empty graph", followsGraph.isEmpty());
         assertTrue("expected empty graph", followsGraph.keySet().containsAll(expectedUsers));
@@ -95,11 +100,11 @@ public class SocialNetworkTest {
 
     @Test
     public void testGuessFollowsGraph3Result() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(tweetsEx1);
+        Map<String, Set<String>> followsGraph = MySocialNetwork.guessFollowsGraph(tweetsEx1);
         Set<String> expectedUsers = new HashSet<>();
         expectedUsers.addAll(Arrays.asList("hahahahaha"));
         Set<String> expectedFollowers = new HashSet<>();
-        expectedFollowers.addAll(Arrays.asList("hello","hello123","test"));
+        expectedFollowers.addAll(Arrays.asList("hello","hello123","test","hahahaha"));
 
         assertFalse("expected empty graph", followsGraph.isEmpty());
         assertTrue("expected empty graph", followsGraph.keySet().containsAll(expectedUsers));
@@ -108,18 +113,21 @@ public class SocialNetworkTest {
 
     @Test
     public void testGuessFollowsGraph2Users() {
-        Map<String, Set<String>> followsGraph = SocialNetwork.guessFollowsGraph(tweetsAll);
+        Map<String, Set<String>> followsGraph = MySocialNetwork.guessFollowsGraph(tweetsAll);
         Set<String> expectedUsers = new HashSet<>();
-        expectedUsers.addAll(Arrays.asList("hahahahaha","alyssa"));
+        expectedUsers.addAll(Arrays.asList("hahahahaha","alyssa","bbitdiddle"));
         Set<String> expectedFollowers = new HashSet<>();
-        expectedFollowers.addAll(Arrays.asList("hello","hello123","test"));
+        expectedFollowers.addAll(Arrays.asList("hello","hello123","test","hahahaha"));
         Set<String> expectedFollowers2 = new HashSet<>();
-        expectedFollowers2.addAll(Arrays.asList("so"));
+        expectedFollowers2.addAll(Arrays.asList("so","hello","hahahahaha"));
+        Set<String> expectedFollowers3 = new HashSet<>();
+        expectedFollowers3.addAll(Arrays.asList("hype"));
 
         assertFalse("expected empty graph", followsGraph.isEmpty());
         assertTrue("expected empty graph", followsGraph.keySet().containsAll(expectedUsers));
         assertTrue("expected empty graph", followsGraph.get("hahahahaha").containsAll(expectedFollowers));
         assertTrue("expected empty graph", followsGraph.get("alyssa").containsAll(expectedFollowers2));
+        assertTrue("expected empty graph", followsGraph.get("bbitdiddle").containsAll(expectedFollowers3));
     }
 
 

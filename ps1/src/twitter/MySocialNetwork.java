@@ -34,7 +34,18 @@ import javafx.print.Collation;
  * you should implement their method bodies, and you may add new public or
  * private methods or classes if you like.
  */
-public class SocialNetwork {
+public class MySocialNetwork {
+
+    public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets){
+        Map<String, Set<String>> followGraphMentioned = SocialNetwork.guessFollowsGraph(tweets);
+        Map<String, Set<String>> followGraphHashTag = guessFollowsGraphHashTag(tweets);
+
+        for(String follower: followGraphHashTag.keySet()){
+            followGraphMentioned.putIfAbsent(follower, new HashSet<>());
+            followGraphMentioned.get(follower).addAll(followGraphHashTag.get(follower));
+        }
+        return followGraphMentioned;
+    }
 
     /**
      * Guess who might follow whom, from evidence found in tweets.
@@ -46,12 +57,12 @@ public class SocialNetwork {
      *         if and only if there is evidence for it in the given list of
      *         tweets.
      *         One kind of evidence that Ernie follows Bert is if Ernie
-     *         @-mentions Bert in a tweet. This must be implemented. Other kinds
+     *         #-mentions Bert in a tweet. This must be implemented. Other kinds
      *         of evidence may be used at the implementor's discretion.
      *         All the Twitter usernames in the returned social network must be
-     *         either authors or @-mentions in the list of tweets.
+     *         either authors or #-mentions in the list of tweets.
      */
-    public static Map<String, Set<String>> guessFollowsGraph(List<Tweet> tweets) {
+    public static Map<String, Set<String>> guessFollowsGraphHashTag(List<Tweet> tweets) {
         Map<String, Set<String>> result = new HashMap<>();
 
         Pattern pattern = Pattern.compile("[A-Za-z0-9-_]+");
@@ -60,7 +71,7 @@ public class SocialNetwork {
             Tweet tweet = tweets.get(i);
             String content = tweet.getText();   
             
-            for(int loc=content.indexOf('@'); loc!=-1; loc=content.indexOf('@',loc+1) ){
+            for(int loc=content.indexOf('#'); loc!=-1; loc=content.indexOf('#',loc+1) ){
 
                 boolean checkBefore;
                 boolean checkAfter;
@@ -88,10 +99,7 @@ public class SocialNetwork {
                             result.putIfAbsent(tweet.getAuthor().toLowerCase(), new HashSet<>());
                             result.get(tweet.getAuthor().toLowerCase()).add(name.toLowerCase());
                         }
-
-
                     }
-                    
                 }
             }
         }

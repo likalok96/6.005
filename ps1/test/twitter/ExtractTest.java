@@ -45,7 +45,7 @@ public class ExtractTest {
     private static final Tweet tweet6 = new Tweet(6, "hahahahaha", "@hello123 @hello #hahahaha", d3);
     private static final Tweet tweet7 = new Tweet(7, "hahahahaha", "ewrwere@hello123 @hello #hahahaha", d3);
     private static final Tweet tweet8 = new Tweet(8, "hahahahaha", "ewrwere@hello123 @hello #hahahaha @", d3);
-    private static final Tweet tweet9 = new Tweet(9, "hahahahaha", "testing @test", d3);
+    private static final Tweet tweet9 = new Tweet(9, "hahahahaha", "testing @test @hahahahaha", d3);
 
 
 

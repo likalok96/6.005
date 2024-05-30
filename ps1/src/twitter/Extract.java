@@ -105,8 +105,8 @@ public class Extract {
 
                     Matcher matcherName = pattern.matcher(content.substring(loc+1));
                     if(matcherName.find()){
-                        String name = matcherName.group(0);
-                        users.add(name.toLowerCase());
+                        String name = matcherName.group(0).toLowerCase();
+                        if(!name.equals(tweets.get(i).getAuthor().toLowerCase())) users.add(name);
                     }
                     
                 }
