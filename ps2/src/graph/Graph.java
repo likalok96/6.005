@@ -25,9 +25,9 @@ public interface Graph<L> {
      * @param <L> type of vertex labels in the graph, must be immutable
      * @return a new empty weighted directed graph
      */
-    public static <L> Graph<String> empty() {
-        return new ConcreteEdgesGraph();
-        //throw new RuntimeException("not implemented");
+    public static <L> Graph<L> empty() {
+        //return new ConcreteEdgesGraph<L>();
+        return new ConcreteVerticesGraph<L>();
     }
     
     /**

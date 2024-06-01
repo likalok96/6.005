@@ -4,19 +4,19 @@
 package twitter;
 
 import java.util.Collections;
-import java.util.Comparator;
+//import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
+//import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collector;
+//import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
-import javafx.print.Collation;
+//import javafx.print.Collation;
 
 /**
  * SocialNetwork provides methods that operate on a social network.

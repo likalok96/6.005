@@ -4,7 +4,6 @@
 package graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -16,15 +15,15 @@ import java.util.Set;
  * 
  * <p>PS2 instructions: you MUST use the provided rep.
  */
-public class ConcreteEdgesGraph implements Graph<String> {
+public class ConcreteEdgesGraph<L> implements Graph<L> {
     
-    private final Set<String> vertices = new HashSet<>();
-    private final List<Edge> edges = new ArrayList<>();
+    private final Set<L> vertices = new HashSet<>();
+    private final List<Edge<L>> edges = new ArrayList<>();
     
     // Abstraction function:
     //   Graph: {V, E} 
     //   V: vertices where vertex v exists 
-    //   E: edges weher edge e exists {source=e.getSoruce() , target=e.getSoruce() ,weight=e.getWeight()}
+    //   E: edges where edge e exists {source=e.getSoruce() , target=e.getSoruce() ,weight=e.getWeight()}
     // Representation invariant:
     //   Graph with v vertices can have <= v(v-1) edges
     //   vertices v in edges, vertices must contain v.source and v.target
@@ -34,9 +33,6 @@ public class ConcreteEdgesGraph implements Graph<String> {
     //   vertices: return defensive copy
     //   source & target: Map is constructed with permitive value in edge which is immutable
     
-    // TODO constructor
-    
-    // TODO checkRep
 
     /**
      * check Rep invariant
@@ -46,7 +42,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
         boolean edgesNumberCheck = edges.size()<=vertices.size()*(vertices.size()-1);
         boolean verticesCheck = true;
 
-        for(Edge edge : edges){
+        for(Edge<L> edge : edges){
             verticesCheck = vertices.contains(edge.getSource()) && vertices.contains(edge.getTarget()) ;
         } 
 
@@ -60,7 +56,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
      * @return index of edge(soruce, target) from edges or -1 if not exist
      */
 
-    public int findEdge(String source, String target){
+    public int findEdge(L source, L target){
         for(int i=0;i<edges.size();i++){
             if(edges.get(i).getSource().equals(source) && edges.get(i).getTarget().equals(target)){
                 return i;
@@ -69,7 +65,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
         return -1;
     }
     
-    @Override public boolean add(String vertex) {
+    @Override public boolean add(L vertex) {
         if(vertices.contains(vertex)){
             return false;
         }
@@ -79,7 +75,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
         //throw new RuntimeException("not implemented");
     }
     
-    @Override public int set(String source, String target, int weight) {
+    @Override public int set(L source, L target, int weight) {
         int index = findEdge(source, target);
 
         if(source.equals(target) || weight < 0){
@@ -91,7 +87,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
             if(!vertices.contains(source)) vertices.add(source);
             if(!vertices.contains(target)) vertices.add(target);
             if(weight>0) {
-                edges.add(new Edge(source, target, weight));
+                edges.add(new Edge<L>(source, target, weight));
             }
             assert checkRep();
             return 0;
@@ -105,7 +101,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
             return 0;
         }
 
-        edges.set(index, new Edge(source, target, weight));
+        edges.set(index, new Edge<L>(source, target, weight));
 
         assert checkRep();
 
@@ -113,7 +109,7 @@ public class ConcreteEdgesGraph implements Graph<String> {
         //throw new RuntimeException("not implemented");
     }
     
-    @Override public boolean remove(String vertex) {
+    @Override public boolean remove(L vertex) {
         if(!vertices.contains(vertex)) return false;
 
         vertices.remove(vertex);
@@ -128,16 +124,14 @@ public class ConcreteEdgesGraph implements Graph<String> {
         assert checkRep();
 
         return true;
-        //throw new RuntimeException("not implemented");
     }
     
-    @Override public Set<String> vertices() {
+    @Override public Set<L> vertices() {
         return new HashSet<>(vertices);
-        //throw new RuntimeException("not implemented");
     }
     
-    @Override public Map<String, Integer> sources(String target) {
-        Map<String, Integer> sourcesMap = new HashMap<>();
+    @Override public Map<L, Integer> sources(L target) {
+        Map<L, Integer> sourcesMap = new HashMap<>();
 
         edges.forEach(edge-> {
             if(edge.getTarget().equals(target)){
@@ -145,11 +139,10 @@ public class ConcreteEdgesGraph implements Graph<String> {
             }
         });
         return sourcesMap;
-        //throw new RuntimeException("not implemented");
     }
     
-    @Override public Map<String, Integer> targets(String source) {
-        Map<String, Integer> targetMap = new HashMap<>();
+    @Override public Map<L, Integer> targets(L source) {
+        Map<L, Integer> targetMap = new HashMap<>();
 
         edges.forEach(edge-> {
             if(edge.getSource().equals(source)){
@@ -160,7 +153,6 @@ public class ConcreteEdgesGraph implements Graph<String> {
         //throw new RuntimeException("not implemented");
     }
     
-    // TODO toString()
     @Override public String toString (){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("vertices:{");
@@ -181,11 +173,10 @@ public class ConcreteEdgesGraph implements Graph<String> {
  * <p>PS2 instructions: the specification and implementation of this class is
  * up to you.
  */
-class Edge {
+class Edge<L> {
     
-    // TODO fields
-    private final String source;
-    private final String target;
+    private final L source;
+    private final L target;
     private final int weight;
 
 
@@ -199,8 +190,7 @@ class Edge {
     //   immutable type
     //   implement with primitive value which is also immutable
     
-    // TODO constructor
-    public Edge(String source, String target, int weight) throws IllegalArgumentException{
+    public Edge(L source, L target, int weight) throws IllegalArgumentException{
         this.source = source;
         this.target = target;
         this.weight = weight;
@@ -208,19 +198,16 @@ class Edge {
 
     }
     
-    // TODO checkRep
     public boolean checkRep(){
-/*         assert !source.equals(target);
-        assert weight>0; */
+
         return !source.equals(target) && weight>0 && source!=null && target!=null;
     }
     
-    // TODO methods
-    public String getSource(){
+    public L getSource(){
         return source;
     }
 
-    public String getTarget(){
+    public L getTarget(){
         return target;
     }
 
@@ -228,7 +215,6 @@ class Edge {
         return weight;
     }
     
-    // TODO toString()
     public String toString(){
         return source  + " ," + weight + "->" + target;
     }
