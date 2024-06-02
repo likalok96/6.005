@@ -3,8 +3,16 @@
  */
 package poet;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.security.KeyStore.Entry;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 import graph.Graph;
 
@@ -68,10 +76,43 @@ public class GraphPoet {
      * @throws IOException if the corpus file cannot be found or read
      */
     public GraphPoet(File corpus) throws IOException {
-        throw new RuntimeException("not implemented");
+        //BufferedReader bufferedReader = new BufferedReader(new FileReader(corpus));
+        //List<String>text = Files.readAllLines(corpus.toPath());
+        LinkedList<String> stringList = new LinkedList<>(); 
+        Scanner scanner = new Scanner(corpus).useDelimiter(" ");
+        String prev;
+        String current;
+        while (scanner.hasNext()) {
+
+            if(stringList.size()==0){
+                stringList.add(scanner.next());
+                current = stringList.getLast().toLowerCase();
+                graph.add(current);
+                continue;
+            }
+
+            prev = stringList.getLast().toLowerCase();
+            stringList.add(scanner.next());
+            //prev = scanner.next();
+            current = stringList.getLast().toLowerCase();
+            graph.add(current);
+            //.get(current)!=null
+            if(graph.targets(prev).keySet().contains(current)){
+                graph.set(prev, current, 10);
+                //graph.targets(prev).get(current) + 1
+            }else{
+                graph.set(prev, current, 1);
+            }
+
+        }
+        scanner.close();
+        //throw new RuntimeException("not implemented");
     }
     
     // TODO checkRep
+    public Graph<String> getGraph(){
+        return graph;
+    }
     
     /**
      * Generate a poem.
@@ -80,7 +121,51 @@ public class GraphPoet {
      * @return poem (as described above)
      */
     public String poem(String input) {
-        throw new RuntimeException("not implemented");
+        StringBuilder stringBuilder = new StringBuilder();
+        Scanner scanner = new Scanner(input).useDelimiter(" ");
+        LinkedList<String> stringList = new LinkedList<>(); 
+        String prev;
+        String current;
+        
+        while (scanner.hasNext()) {
+
+            if(stringList.size()==0){
+                stringList.add(scanner.next());
+                current = stringList.getLast();
+                stringBuilder.append(current);
+                continue;
+            }
+            prev = stringList.getLast().toLowerCase();
+            stringList.add(scanner.next());
+            current = stringList.getLast().toLowerCase();
+
+            Map<String, Integer> source = graph.sources(current);
+            Map<String, Integer> target = graph.targets(prev);
+
+            if(source.get(prev.toLowerCase())==null){
+                int maxWeight = 0;
+                String maxString = "";
+                for(String t : target.keySet()){
+                    Map<String, Integer> targetT = graph.targets(t);
+                    //targetT.get(current.toLowerCase())!=null && 
+                    if(targetT.get(current.toLowerCase())!=null && targetT.get(current.toLowerCase())>maxWeight){
+                        maxWeight =  targetT.get(current);
+                        maxString = t;
+                        
+                    }
+                }
+                if(maxWeight>0) stringBuilder.append(" "+ maxString);
+                
+            }
+
+            stringBuilder.append(" " + current);
+
+
+        }
+        scanner.close();
+
+        return stringBuilder.toString();
+        //throw new RuntimeException("not implemented");
     }
     
     // TODO toString()
