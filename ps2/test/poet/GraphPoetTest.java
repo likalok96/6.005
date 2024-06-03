@@ -20,7 +20,14 @@ import graph.Graph;
 public class GraphPoetTest {
     
     // Testing strategy
-    //   TODO
+    /* Partition:
+     *  GraphPoet():
+     *      file not exist
+     *  poem(input):
+     *      word match with different and same case
+     *      no word match
+     *      bridge word: 0,1, >1 (with different weight) 
+     */
     
     @Test(expected=AssertionError.class)
     public void testAssertionsEnabled() {
@@ -28,34 +35,52 @@ public class GraphPoetTest {
     }
     
     // TODO tests
+
+    @Test(expected=IOException.class)
+    public void testGraphPoetNotExist() throws IOException{
+        File file = new File("test/poet/poet-hahaha.txt");
+        GraphPoet poetGraph = new GraphPoet(file);        
+    }
+
     @Test
     public void testGraphPoet() throws IOException{
         File file = new File("test/poet/poet-try.txt");
         GraphPoet poetGraph = new GraphPoet(file);
-        Graph<String> graph = poetGraph.getGraph();
-        
-/*         assertEquals(2, graph.vertices().size());
-        assertTrue(graph.vertices().containsAll(Arrays.asList("hello,","goodbye!")));
-        int num = graph.sources("goodbye!").get("hello,");
-        assertEquals(3,num); */
 
-        
         assertEquals("Test of the system.", poetGraph.poem("Test the system.") );
     }
 
     @Test
-    public void testGraphPoet2() throws IOException{
+    public void testGraphPoetNoMatch() throws IOException{
+        File file = new File("test/poet/poet-test0.txt");
+        GraphPoet poetGraph = new GraphPoet(file);
+        
+        assertEquals("seek to explore new and exciting syn", poetGraph.poem("seek to explore new and exciting syn") );
+    }
+
+    @Test
+    public void testGraphPoetOneMatch() throws IOException{
         File file = new File("test/poet/poet-test1.txt");
         GraphPoet poetGraph = new GraphPoet(file);
-        Graph<String> graph = poetGraph.getGraph();
-        
-/*         assertEquals(2, graph.vertices().size());
-        assertTrue(graph.vertices().containsAll(Arrays.asList("hello,","goodbye!")));
-        int num = graph.sources("goodbye!").get("hello,");
-        assertEquals(3,num); */
 
-        
         assertEquals("seek to explore strange new life and exciting syn", poetGraph.poem("seek to explore new and exciting syn") );
+    }
+
+    
+    @Test
+    public void testGraphPoetOneMatch2() throws IOException{
+        File file = new File("test/poet/poet-test2.txt");
+        GraphPoet poetGraph = new GraphPoet(file);
+        
+        assertEquals("seek to explore strange new life and new exciting syn", poetGraph.poem("seek to explore new and exciting syn") );
+    }
+
+    @Test
+    public void testGraphPoetTwoMatch() throws IOException{
+        File file = new File("test/poet/poet-test3.txt");
+        GraphPoet poetGraph = new GraphPoet(file);
+        
+        assertEquals("seek to explore haha new life and exciting syn", poetGraph.poem("seek to explore new and exciting syn") );
     }
     
 }
