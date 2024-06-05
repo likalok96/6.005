@@ -10,6 +10,11 @@ public class Numeric implements Expression {
     }
 
     @Override
+    public boolean needBracket(char opt2){
+        return false;
+    }
+
+    @Override
     public boolean equals(Object thatObject){
         if (thatObject instanceof Numeric) {
             BigDecimal num1 = BigDecimal.valueOf(num.doubleValue());
@@ -31,6 +36,7 @@ public class Numeric implements Expression {
 
     @Override
     public String toString(){
+        //return num.stripTrailingZeros().toPlainString();
         return String.valueOf(num);
     }
 

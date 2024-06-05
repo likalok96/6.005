@@ -3,6 +3,17 @@
  */
 package expressivo;
 
+
+import org.antlr.v4.runtime.CharStream;
+
+import expressivo.parser.ExpressionLexer;
+import expressivo.parser.ExpressionParser;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 /**
  * An immutable data type representing a polynomial expression of:
  *   + and *
@@ -26,8 +37,25 @@ public interface Expression {
      * @throws IllegalArgumentException if the expression is invalid
      */
     public static Expression parse(String input) {
-        throw new RuntimeException("unimplemented");
+        CharStream stream = new ANTLRInputStream(input);
+        ExpressionLexer lexer = new ExpressionLexer(stream);
+        TokenStream tokens = new CommonTokenStream(lexer);
+        ExpressionParser parser = new ExpressionParser(tokens);
+
+        ParseTree tree = parser.root();
+        ExpressionGenerator expressionGenerator = new ExpressionGenerator();
+        new ParseTreeWalker().walk(expressionGenerator, tree);
+        System.err.println(tree.toStringTree(parser));
+        return expressionGenerator.getExpression();
+        //throw new RuntimeException("unimplemented");
     }
+
+    /**
+     * 
+     * @param opt2 parent Operation opt
+     * @return  true if Operation need a Bracket, false if no need Bracket.
+     */
+    public boolean needBracket(char opt2);
     
     /**
      * @return a parsable representation of this expression, such that
