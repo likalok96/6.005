@@ -1,12 +1,18 @@
 package expressivo;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 public class Numeric implements Expression {
     public final Number num;
     
     public Numeric(Number num){
         this.num = num;
+    }
+
+    public BigDecimal getNum(){
+        BigDecimal num1 = BigDecimal.valueOf(num.doubleValue());
+        return num1;
     }
 
     @Override
@@ -36,9 +42,21 @@ public class Numeric implements Expression {
 
     @Override
     public String toString(){
-        //return num.stripTrailingZeros().toPlainString();
-        return String.valueOf(num);
+        BigDecimal num1 = BigDecimal.valueOf(num.doubleValue());
+        return num1.stripTrailingZeros().toPlainString();
+        //return String.valueOf(num);
     }
+
+    @Override
+    public Expression differentiate(String variable){
+        return new Numeric(0);
+    }
+
+    @Override
+    public Expression simplify(Map<String,Double> environment){
+        return this;
+    }
+
 
 }
 
