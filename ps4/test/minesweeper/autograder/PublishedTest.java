@@ -96,17 +96,17 @@ public class PublishedTest {
         PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
         //assertTrue("expected HELLO message", in.readLine().startsWith("Welcome"));
-        assertEquals("expected HELLO message", in.readLine(),"Welcome to Minesweeper. Board: 10 columns by 10 rows. Players: 1 including you. Type 'help' for help.");
+        assertEquals("expected HELLO message", in.readLine(),"Welcome to Minesweeper. Board: 7 columns by 7 rows. Players: 1 including you. Type 'help' for help.");
 
         Socket socket2 = connectToMinesweeperServer(thread);
         
         BufferedReader in2 = new BufferedReader(new InputStreamReader(socket2.getInputStream()));
         PrintWriter out2 = new PrintWriter(socket2.getOutputStream(), true);
 
-        assertEquals("expected HELLO message", in2.readLine(),"Welcome to Minesweeper. Board: 10 columns by 10 rows. Players: 2 including you. Type 'help' for help.");
+        assertEquals("expected HELLO message", in2.readLine(),"Welcome to Minesweeper. Board: 7 columns by 7 rows. Players: 2 including you. Type 'help' for help.");
 
 
-/*         out.println("look");
+        out.println("look");
         assertEquals("- - - - - - -", in.readLine());
         assertEquals("- - - - - - -", in.readLine());
         assertEquals("- - - - - - -", in.readLine());
@@ -116,6 +116,7 @@ public class PublishedTest {
         assertEquals("- - - - - - -", in.readLine());
 
         out.println("dig 3 1");
+        assertEquals("", in.readLine());
         assertEquals("- - - - - - -", in.readLine());
         assertEquals("- - - 1 - - -", in.readLine());
         assertEquals("- - - - - - -", in.readLine());
@@ -125,6 +126,7 @@ public class PublishedTest {
         assertEquals("- - - - - - -", in.readLine());
 
         out.println("dig 4 1");
+        assertEquals("", in.readLine());
         assertEquals("BOOM!", in.readLine());
 
         out.println("look"); // debug mode is on
@@ -136,7 +138,7 @@ public class PublishedTest {
         assertEquals("1 1          ", in.readLine());
         assertEquals("- 1          ", in.readLine());
 
-        out.println("bye"); */
+        out.println("bye");
         socket.close();
     }
 }

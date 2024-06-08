@@ -103,8 +103,14 @@ public class MinesweeperServer {
         try {
             for (String line = in.readLine(); line != null; line = in.readLine()) {
                 String output = handleRequest(line);
-                if (output != null) {
+                if (output.equals("BYE!")) {
+                    break;
                     // TODO: Consider improving spec of handleRequest to avoid use of null
+                    
+                } else if(output.equals("BOOM!")){
+                    out.println(output);
+                    if(!debug) break;
+                } else {
                     out.println(output);
                 }
             }
@@ -113,6 +119,13 @@ public class MinesweeperServer {
             in.close();
             playerCount('-');
         }
+    }
+
+    private boolean checkSquareInRange(int col, int row, Board board){
+        if(col<0 || row<0 || col>=board.getColumns() || row>=board.getRows()){
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -126,33 +139,47 @@ public class MinesweeperServer {
                      + "(dig -?\\d+ -?\\d+)|(flag -?\\d+ -?\\d+)|(deflag -?\\d+ -?\\d+)";
         if ( ! input.matches(regex)) {
             // invalid input
-            // TODO Problem 5
+            return "Enter command: look, flag X Y, deflag X Y, dig X Y\n";
         }
         String[] tokens = input.split(" ");
         if (tokens[0].equals("look")) {
             // 'look' request
-            // TODO Problem 5
+            return board.toString();
         } else if (tokens[0].equals("help")) {
             // 'help' request
-            // TODO Problem 5
+            return "Enter command: look, flag X Y, deflag X Y, dig X Y\n";
         } else if (tokens[0].equals("bye")) {
             // 'bye' request
-            // TODO Problem 5
+            return "BYE!";
         } else {
             int x = Integer.parseInt(tokens[1]);
             int y = Integer.parseInt(tokens[2]);
+            if(!checkSquareInRange(x, y,board)){
+                return "out of range\n";
+            }
             if (tokens[0].equals("dig")) {
                 // 'dig x y' request
-                // TODO Problem 5
+                if(board.isBoom(x, y)){
+                    if(debug) {
+                        board.setBoom(x, y, false);
+                        board.dig(x, y);
+                        String.valueOf(board.countBoom(x, y));
+                    }
+                    return "BOOM!";
+                }
+                board.dig(x, y);
+                return board.toString();
             } else if (tokens[0].equals("flag")) {
                 // 'flag x y' request
-                // TODO Problem 5
+                board.flag(x, y);
+                return board.toString();
             } else if (tokens[0].equals("deflag")) {
                 // 'deflag x y' request
-                // TODO Problem 5
+                board.unflag(x, y);
+                return board.toString();
             }
         }
-        // TODO: Should never get here, make sure to return in each of the cases above
+        // Should never get here, make sure to return in each of the cases above
         throw new UnsupportedOperationException();
     }
 
@@ -272,9 +299,10 @@ public class MinesweeperServer {
      */
     public static void runMinesweeperServer(boolean debug, Optional<File> file, int sizeX, int sizeY, int port) throws IOException {
         
-        // TODO: Continue implementation here in problem 4
+        // Continue implementation here in problem 4
+        Board board = file.isPresent() ?  new Board(file.get()) : new Board(sizeY,sizeX);
         
-        MinesweeperServer server = new MinesweeperServer(port, debug, new Board(file.get()));
+        MinesweeperServer server = new MinesweeperServer(port, debug, board);
         server.serve();
     }
 }

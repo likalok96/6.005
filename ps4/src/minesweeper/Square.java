@@ -12,29 +12,33 @@ public class Square {
 
     private boolean isBoom;
     private SquareState state;
-    private int boomCount;
+    //private int boomCount;
 
     public Square(boolean isBoom){
         this.isBoom = isBoom;
         this.state = SquareState.untouched;
-        this.boomCount = 0;
+        //this.boomCount = 0;
     }
 
     public boolean getBoom(){
         return isBoom;
     }
 
+    public void setBoom(boolean boom){
+        isBoom = boom;
+    }
+
     public SquareState getState(){
         return state;
     }
 
-    public int getBoomCount(){
+/*     public int getBoomCount(){
         return boomCount;
     }
 
     public void setBoomCount(int count){
         boomCount = count;
-    }
+    } */
 
     public void setState(SquareState state){
         this.state = state;
@@ -48,7 +52,8 @@ public class Square {
             case flagged:
                 return "F";
             case dug:
-                return boomCount == 0 ? " " : Integer.toString(boomCount);
+            return " ";
+                //return boomCount == 0 ? " " : Integer.toString(boomCount);
             default:
                 throw new RuntimeException("unexpected input");
         }
