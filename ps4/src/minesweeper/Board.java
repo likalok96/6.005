@@ -15,15 +15,36 @@ import minesweeper.Square.SquareState;
  */
 public class Board {
     
-    // TODO: Abstraction function, rep invariant, rep exposure, thread safety
+    /**
+     * Abstract Function: 
+     *      AF(board, rows, columns) = a minesweeper board with rows * columns size filled with Square.
+     * Rep variant:
+     *      rows & columns >0
+     *      
+     * Rep exposure:
+     *      rows & columns are private final
+     *      board is only return from toString as String
+     *      boomChance is never return
+     * 
+     * Thread Safty:
+     *      method are guarded with object lock synchronized
+     *      only get row and columns are not as it will not change
+     * 
+     */
     
-    // TODO: Specify, test, and implement in problem 2
+    //private final Object boardLock = new Object();
 
     private final Square[][] board;
     private final int rows;
     private final int columns;
     private final Double boomChance = 0.25;
 
+    /**
+     * Make a Board with random boom position
+     * 
+     * @param col columns of board
+     * @param row rows of board
+     */
     public Board(int col, int row) {
         columns = col;
         rows = row;
@@ -35,6 +56,12 @@ public class Board {
         }
     }
 
+
+    /**
+     * Make a Board from file
+     * @param file to make Board from file
+     * @throws IOException
+     */
     public Board(File file) throws IOException{
 
         List<String> lines = Files.readAllLines(file.toPath());
@@ -54,37 +81,71 @@ public class Board {
         }
 
     }
-
+    /**
+     * get columns of board
+     * @return columns of board
+     */
     public int getColumns(){
         return columns;
     }
-
+    /**
+     * get rows of board
+     * @return rows of board
+     */
     public int getRows(){
         return rows;
     }
-
+    /**
+     * get board[row][col] square state
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     * @return state of the square
+     */
     public synchronized SquareState getSquareState(int col, int row){
         return board[row][col].getState();
     }
-
+    /**
+     * change board[row][col] square state from untouched to flag
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     */
     public synchronized void flag(int col, int row){
         if(board[row][col].getState().equals(SquareState.dug)) return;
         board[row][col].setState(SquareState.flagged);
     }
-
+    /**
+     * change board[row][col] square state from flag to untouched
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     */
     public synchronized void unflag(int col, int row){
         if(board[row][col].getState().equals(SquareState.dug)) return;
         board[row][col].setState(SquareState.untouched);
     }
-
+    /**
+     * check board[row][col] square contains boom or not
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     * @return true if the sqaure contains a boom
+     */
     public synchronized boolean isBoom(int col, int row){
         return board[row][col].getBoom();
     }
-
+    /**
+     * change board[row][col] square to contains boom or not
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     */
     public synchronized void setBoom(int col, int row, boolean boom){
         board[row][col].setBoom(boom);
     }
-
+    /**
+     * change board[row][col] square to dug
+     * recursively check square nearby if sqaure it in the board OR Not conatins boom OR Not already dug
+     * And dug those sqaures
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     */
     public synchronized void dig(int col, int row){
 
 /*         if(board[row][col].getState().equals(SquareState.dug)){
@@ -110,25 +171,40 @@ public class Board {
                     //board[coor[1]][coor[0]].setState(SquareState.dug);
                 }
             }
-        }
-
     }
 
+    }
+    /**
+     * get board[row][col] square nearby squares list which contains out of range indexes
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     * @return nearby squares list which contains out of range indexes
+     */
     private int[][] getNeighborList(int col, int row){
         int[][] result = {{row-1,col-1}, {row-1,col}, {row-1,col+1},
                           {row,col-1},            {row,col+1},
                           {row+1,col-1}, {row+1,col}, {row+1,col+1}};
         return result;
     }
-
+    /**
+     * Check in col OR row is out or range
+     * @param col col in and outside board 
+     * @param row row in and outside board 
+     * @return  true if 0 <= col <columns & 0 <= row < rows,otherise false
+     */
     private boolean checkSquareInRange(int col, int row){
         if(col<0 || row<0 || col>=columns || row>=rows){
             return false;
         }
         return true;
     }
-
-    public int countBoom(int col, int row){
+    /**
+     * count number of neaby squares booms
+     * @param col col in board where, 0 <= col <columns
+     * @param row row in board where, 0 <= row < rows
+     * @return number of neaby squares booms
+     */
+    public synchronized int countBoom(int col, int row){
         int boom = 0;
 
         int[][] neighbor = getNeighborList(col, row);
@@ -163,5 +239,5 @@ public class Board {
 
         return str;
     }
-    
+
 }

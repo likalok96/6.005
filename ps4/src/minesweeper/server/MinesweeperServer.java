@@ -15,7 +15,13 @@ import minesweeper.Board;
 public class MinesweeperServer {
 
     // System thread safety argument
-    //   TODO Problem 5
+    //   All method is synchronized
+    /**  Board is thread safe by its own
+     *   each player connection is handle by a new thread
+     *   call borad method are synchronized 
+     *   Request are handled by players own thread and no shared data
+     *   All board method are called by server thread which is synchronized
+     */
 
     /** Default server port. */
     private static final int DEFAULT_PORT = 4444;
@@ -28,12 +34,24 @@ public class MinesweeperServer {
     private final ServerSocket serverSocket;
     /** True if the server should *not* disconnect a client after a BOOM message. */
     private final boolean debug;
-
+    /**the onlt Board instance for all players */
     private final Board board;
-
+    /**number of players connected to server */
     private int playerNum;
 
-    // TODO: Abstraction function, rep invariant, rep exposure
+    /**
+     * Abstract Function: 
+     *      AF(server, debug, board, playerCount) = a socket server with multiplayer connecting to play minesweeper
+     *                                              board is generated throught a file or randomly generated with input size.
+     *                                              PlayerCount current number of player is maintained by server.
+     *                                              Open server with debug flag will not terminate connection.
+     * Rep variant:
+     *      playerCount >0
+     *      
+     * Rep exposure:
+     *      all fields are private final
+     *      board and playerCount are never return
+     */
 
     /**
      * Make a MinesweeperServer that listens for connections on port.
@@ -78,7 +96,7 @@ public class MinesweeperServer {
         }
     }
 
-    public synchronized void playerCount(char opt){
+    private synchronized void playerCount(char opt){
         if(opt=='+'){
             playerNum++;
         }else{
@@ -105,7 +123,7 @@ public class MinesweeperServer {
                 String output = handleRequest(line);
                 if (output.equals("BYE!")) {
                     break;
-                    // TODO: Consider improving spec of handleRequest to avoid use of null
+                    // Consider improving spec of handleRequest to avoid use of null
                     
                 } else if(output.equals("BOOM!")){
                     out.println(output);
