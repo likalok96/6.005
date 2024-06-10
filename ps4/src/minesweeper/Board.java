@@ -110,7 +110,7 @@ public class Board {
      * @param row row in board where, 0 <= row < rows
      */
     public synchronized void flag(int col, int row){
-        if(board[row][col].getState().equals(SquareState.dug)) return;
+        if(!checkSquareInRange(row, col) || board[row][col].getState().equals(SquareState.dug)) return;
         board[row][col].setState(SquareState.flagged);
     }
     /**
@@ -119,7 +119,7 @@ public class Board {
      * @param row row in board where, 0 <= row < rows
      */
     public synchronized void unflag(int col, int row){
-        if(board[row][col].getState().equals(SquareState.dug)) return;
+        if(!checkSquareInRange(row, col) || board[row][col].getState().equals(SquareState.dug)) return;
         board[row][col].setState(SquareState.untouched);
     }
     /**
@@ -137,6 +137,8 @@ public class Board {
      * @param row row in board where, 0 <= row < rows
      */
     public synchronized void setBoom(int col, int row, boolean boom){
+        if(!checkSquareInRange(row, col)) return;
+
         board[row][col].setBoom(boom);
     }
     /**
@@ -152,8 +154,8 @@ public class Board {
             int count = countBoom(col, row);
             board[row][col].setBoomCount(count);
         } */
-
-        if(board[row][col].getBoom() || !checkSquareInRange(row, col) || board[row][col].getState().equals(SquareState.dug)){
+        //board[row][col].getBoom() || 
+        if(!checkSquareInRange(row, col) || board[row][col].getState().equals(SquareState.dug)){
             return;
         }
 
